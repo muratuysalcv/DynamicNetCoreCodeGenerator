@@ -1,0 +1,84 @@
+﻿@model Scriptingo.Admin.Models.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+@section appHeader{
+}
+@section appBottomMenu{
+
+}
+<!-- * App Header -->
+<!-- App Capsule -->
+<div id="appCapsule">
+
+    <div class="login-form">
+        <div class="section">
+            <h1>@Html.T("Register")</h1>
+            <h4>@Html.T("Fill the form to join us")</h4>
+        </div>
+        <div class="section mt-2 mb-5">
+            <form asp-action="Register">
+
+                <div class="form-group boxed">
+                    <div class="input-wrapper">
+                        <input asp-for="Email" class="form-control" placeholder="@Html.T("Email")" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <i class="clear-input">
+                            <ion-icon name="close-circle"></ion-icon>
+                        </i>
+                    </div>
+                </div>
+
+                <div class="form-group boxed">
+                    <div class="input-wrapper">
+                        <input asp-for="Password" type="password" class="form-control" placeholder="@Html.T("Password")" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+
+                        <i class="clear-input">
+                            <ion-icon name="close-circle"></ion-icon>
+                        </i>
+                    </div>
+                </div>
+
+                <div class="form-group boxed">
+                    <div class="input-wrapper">
+                        <input asp-for="FirstName" type="text" class="form-control" placeholder="@Html.T("FirstName")" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+
+                        <i class="clear-input">
+                            <ion-icon name="close-circle"></ion-icon>
+                        </i>
+                    </div>
+                </div>
+
+                <div class="form-group boxed">
+                    <div class="input-wrapper">
+                        <input asp-for="LastName" type="text" class="form-control" placeholder="@Html.T("LastName")" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+
+                        <i class="clear-input">
+                            <ion-icon name="close-circle"></ion-icon>
+                        </i>
+                    </div>
+                </div>
+
+                <div class=" mt-1 text-start">
+                    <div class="form-check">
+                        <input asp-for="CheckedPolicy" type="checkbox" class="form-check-input" id="customCheckb1">
+                        <label class="form-check-label" for="customCheckb1">
+                            @Html.T("I Agree <a target='_blank' href='{0}'>Terms &Conditions</a>",Url.Action("privacy","home").ToString())
+                            <span asp-validation-for="CheckedPolicy" class="text-danger"></span>
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="form-button-group">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">@Html.T("Register")</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

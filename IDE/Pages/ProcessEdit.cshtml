@@ -1,0 +1,165 @@
+﻿@page
+@using Scriptingo.Common;
+@using Scriptingo.Common.Models;
+@model Scriptingo.Admin.Pages.ProcessEditModel
+@{
+    ViewData["Title"] = "Process";
+    //Layout = "_LayoutBase";
+    int id = 0;
+    try
+    {
+        id = Convert.ToInt32(Request.Query["id"]);
+    }
+    catch (Exception)
+    {
+    }
+    var dbCon = new FastApiContext<_con>();
+    var dbProcess = new FastApiContext<_process>();
+
+    var conList = dbCon.Data.ToList();
+    var process = dbProcess.Data.FirstOrDefault(x => x.ID == id);
+    if (process == null)
+    {
+        process = new _process();
+    }
+}
+<link rel=stylesheet href="~/lib/codemirror5/lib/codemirror.css">
+<link href="~/lib/codemirror5/theme/darcula.css" rel="stylesheet" />
+<div class="card">
+    <div class="card-header">
+        Process
+    </div>
+    <div class="card-body">
+<div class="col-md-12">
+    <form method="post" class="p-4">
+        <input id="id" type="hidden" value="@id" />
+        <div class="mb-3">
+            <label for="name" class="form-label">name</label>
+            <input type="text" class="form-control" id="name" name="name" value="@process.name">
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">connection</label>
+            <select class="form-control" selected="@process.con_id" name="con_id" id="con_id">
+                @foreach (var item in conList)
+                {
+                    <option value="@item.ID">@item.name</option>
+                }
+            </select>
+            <div id="emailHelp" class="form-text">Name of process which important for calling by.</div>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description">@process.description</textarea>
+
+        </div>
+        <div class="mb-3">
+            <label for="sql" class="form-label">Sql</label>
+            <textarea class="form-control" name="sql" id="sql">@process.sql</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">active</label>
+            <select class="form-control" selected="@process.active" name="active" id="active">
+                <option value="True">True</option>
+                <option value="False">False</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Submit</button>
+    </form>
+</div>
+    </div>
+</div>
+@section Scripts{
+
+
+    <script src="~/lib/codemirror5/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror5/lib/codemirror.css">
+    <script src="~/lib/codemirror5/addon/edit/matchbrackets.js"></script>
+    <script src="~/lib/codemirror5/mode/sql/sql.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror5/addon/hint/show-hint.css" />
+    <script src="~/lib/codemirror5/addon/hint/show-hint.js"></script>
+    <script src="~/lib/codemirror5/addon/hint/sql-hint.js"></script>
+
+    <script>
+        var myCodeMirror = null;
+        $(function () {
+            $('#con_id').val('@(process.con_id)');
+            $('#active').val('@(process.active)');
+
+            myCodeMirror = CodeMirror.fromTextArea(document.getElementById('sql'), {
+                mode: 'text/x-mssql',
+                theme: 'darcula',
+                indentWithTabs: true,
+                smartIndent: true,
+                lineNumbers: true,
+                matchBrackets: true,
+                autofocus: true,
+                extraKeys: { "Ctrl-Space": "autocomplete" },
+                hintOptions: {
+                    tables: {
+                        users: ["name", "score", "birthDate"],
+                        countries: ["name", "population", "size"]
+                    }
+                }
+            });
+        });
+
+        function Save() {
+            id = $('#id').val();
+            name = $('#name').val();
+            desc = $('#description').val();
+            sql = '';
+            if (myCodeMirror != null)
+                sql = myCodeMirror.getValue();
+
+            active = $('#active').val();
+            con_id = $('#con_id').val();
+            if (id == 0) {
+
+                $.post('/api/execute/insertProcess', { 
+                    name: name, 
+                    description: desc, 
+                    sql: sql, 
+                    con_id: con_id, 
+                    active: active })
+                    .done(function (response) {
+                        if (response.status == "success") {
+                            notifier.success('Operation completed successfully');
+                        }
+                        else {
+                            notifier.warning(response.message);
+                        }
+                        parent.refresh();
+                    })
+                    .fail(function () {
+                        notifier.warning('An error occured. Please check fields.');
+                    });
+            }
+            else {
+
+                $.post('/api/execute/updateProcess', { 
+                    id: id, 
+                    name: name, 
+                    description: desc, 
+                    sql: sql, 
+                    con_id: con_id, 
+                    active: active })
+                    .done(function (response) {
+                        if (response.status == "success") {
+                            notifier.success('Operation completed successfully');
+                        }
+                        else {
+                            notifier.warning(response.message);
+                        }
+                        parent.refresh();
+                    })
+                    .fail(function () {
+                        notifier.warning('An error occured. Please check fields.');
+                    });
+            }
+        }
+
+
+    </script>
+
+
+}

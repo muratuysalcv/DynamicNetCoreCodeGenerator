@@ -1,0 +1,30 @@
+﻿@using Scriptingo.Admin.Managers;
+@using Scriptingo.FastApi.Common;
+
+@{
+    var list = SessionManager.GetObject<List<data>>("messages", this.Context);
+    if (list == null)
+        list = new List<data>();
+}
+@if (list.Count > 0)
+{
+       <script>
+        let notifier = new AWN({});
+        @foreach (var item in list)
+        {
+            if (item.name == "success")
+            {
+                @Html.Raw("notifier.success('"+item.value+"');")
+            }
+            else if (item.name == "error")
+            {
+                @Html.Raw("notifier.alert('"+item.value+"');")
+            }
+            else if (item.name == "warning")
+            {
+                @Html.Raw("notifier.info('"+item.value+"');")
+            }
+        }
+    </script>
+    SessionManager.Kill("messages",this.Context);
+}

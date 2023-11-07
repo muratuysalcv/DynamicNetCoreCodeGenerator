@@ -1,0 +1,130 @@
+﻿@using Scriptingo.Admin.Managers;
+@using Scriptingo.Common;
+@using Scriptingo.Common.Models;
+@model Scriptingo.Admin.Models.ProcessModel
+
+@{
+    ViewData["Title"] = Html.T("Edit Process");
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = SessionManager.GetUserId(this.Context);
+    var apis = (new FastApiContext<_api>()).Data.Where(x => x.user_id == userId).Select(x => x.ID).ToList();
+    var connections = (new FastApiContext<_con>()).Data.Where(x => apis.Contains(x.api_id)).ToList();
+}
+<div class="section full mt-2 mb-2">
+    <div class="wide-block pb-1 pt-2">
+        <form asp-action="edit">
+            <input asp-for="ID" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group boxed">
+                <div class="input-wrapper">
+                    <label asp-for="name" class="form-label">@Html.T("Process Name")</label>
+                    <input asp-for="name" class="form-control" />
+                    <span asp-validation-for="name" class="text-danger"></span>
+                    <i class="clear-input">
+                        <ion-icon name="close-circle"></ion-icon>
+                    </i>
+                </div>
+
+                <div class="input-wrapper">
+                    <label asp-for="con_id" class="form-label">@Html.T("Connection Type")</label>
+                    <select asp-for="con_id" class="form-control">
+                        @foreach (var item in connections)
+                        {
+                            <option class=' @if(item.ID==Model.con_id){
+                        @("' selected attr='")
+}' value="@item.ID">
+                                @item.name
+                            </option>
+                        }
+
+                    </select>
+
+                    <span asp-validation-for="con_id" class="text-danger"></span>
+                    <i class="clear-input">
+                        <ion-icon name="close-circle"></ion-icon>
+                    </i>
+                </div>
+                <div class="input-wrapper">
+                    <label asp-for="description" class="form-label">@Html.T("Comments (for documentation)")</label>
+                    <textarea asp-for="description" class="form-control"></textarea>
+                    <span asp-validation-for="description" class="text-danger"></span>
+                    <i class="clear-input">
+                        <ion-icon name="close-circle"></ion-icon>
+                    </i>
+                </div>
+                <div class="input-wrapper">
+                    <label asp-for="sql" class="form-label">@Html.T("Sql")</label>
+                    <input asp-for="sql" class=" form-control" />
+                    <span asp-validation-for="sql" class="text-danger"></span>
+                    <i class="clear-input">
+                        <ion-icon name="close-circle"></ion-icon>
+                    </i>
+                </div>
+
+                <div class="form-group boxed">
+
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" asp-for="active" />
+                        <label class="form-check-label" asp-for="active">
+                            @Html.T("Active")
+                        </label>
+                    </div>
+                    <i class="clear-input">
+                        <ion-icon name="close-circle"></ion-icon>
+                    </i>
+                </div>
+                
+                <button type="button" onclick="Save()" class="btn btn-primary">
+                    @Html.T("Submit")
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+
+
+    <script src="~/lib/codemirror5/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror5/lib/codemirror.css">
+    <script src="~/lib/codemirror5/addon/edit/matchbrackets.js"></script>
+    <script src="~/lib/codemirror5/mode/sql/sql.js"></script>
+    <link rel="stylesheet" href="~/lib/codemirror5/addon/hint/show-hint.css" />
+    <script src="~/lib/codemirror5/addon/hint/show-hint.js"></script>
+    <script src="~/lib/codemirror5/addon/hint/sql-hint.js"></script>
+    <link href="~/lib/codemirror5/theme/darcula.css" rel="stylesheet" />
+    <script>
+        var myCodeMirror = null;
+        $(function () {
+            myCodeMirror = CodeMirror.fromTextArea(document.getElementById('sql'), {
+                mode: 'text/x-mssql',
+                theme: 'darcula',
+                indentWithTabs: true,
+                smartIndent: true,
+                lineNumbers: true,
+                matchBrackets: true,
+                autofocus: true,
+                extraKeys: { "Ctrl-Space": "autocomplete" },
+                hintOptions: {
+                    tables: {
+                        users: ["name", "score", "birthDate"],
+                        countries: ["name", "population", "size"]
+                    }
+                }
+            });
+        });
+
+        function Save() {
+            var sql = myCodeMirror.getValue();
+            $("#sql").val(sql);
+            $('form').submit();
+        }
+    </script>
+
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+}

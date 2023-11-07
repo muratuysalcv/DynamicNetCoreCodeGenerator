@@ -1,0 +1,160 @@
+﻿@page
+@using Scriptingo.Common;
+@using Scriptingo.Common.Models;
+@model Scriptingo.Admin.Pages.ConEditModel
+@{
+    ViewData["Title"] = "Connection";
+    int id = 0;
+    try
+    {
+        id = Convert.ToInt32(Request.Query["id"]);
+    }
+    catch (Exception)
+    {
+    }
+    var conContext = new FastApiContext<_con>();
+    var conTypeContext = new FastApiContext<_con_type>();
+    var conTypeList = conTypeContext.Data.ToList();
+    int? con_id = 0;
+    var con = conContext.Data.FirstOrDefault(x => x.ID == id);
+    if (con == null)
+    {
+        con = new _con();
+        con.con_type_id = 1;
+    }
+}
+<link rel=stylesheet href="~/lib/codemirror5/lib/codemirror.css">
+<link href="~/lib/codemirror5/theme/darcula.css" rel="stylesheet" />
+
+<div class="col-md-12">
+
+    <div class="card">
+        <div class="card-header">
+            Connection
+        </div>
+        <div class="card-body">
+          
+     
+
+   
+    <form method="post" class="p-4">
+        <input id="id" type="hidden" value="@id" />
+        <div class="mb-3">
+            <label class="form-label">name</label>
+            <input type="text" class="form-control" id="name" name="name" value="@con.name">
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">connection</label>
+            <select class="form-control" name="con_type_id" id="con_type_id">
+                @foreach (var item in conTypeList)
+                {
+                    <option value="@item.ID">@item.name</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">active</label>
+            <select class="form-control" selected="@con.active" name="active" id="active">
+                <option value="True">True</option>
+                <option value="False">False</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">db source</label>
+            <input type="text" class="form-control" id="db_source" name="db_source" value="@con.db_source">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">db name</label>
+            <input type="text" class="form-control" id="db_name" name="db_name" value="@con.db_name">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">db user</label>
+            <input type="text" class="form-control" id="db_user" name="db_user" value="@con.db_user">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">db password</label>
+            <input type="text" class="form-control" id="db_user" name="db_password" value="@con.db_password">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">db port</label>
+            <input type="text" class="form-control" id="db_user" name="db_port" value="@con.db_port">
+        </div>
+         <div class="mb-3">
+            <label class="form-label">db schema</label>
+            <input type="text" class="form-control" id="db_schema" name="db_schema" value="@con.db_schema">
+        </div>
+        <div class="mb-3">
+            <label for="connection" class="form-label">Comment</label>
+                    <textarea class="form-control" id="connection" name="comment">@con.comment</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Submit</button>
+    </form>
+
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+
+        $(function () {
+            $('#con_type_id').val('@(con.con_type_id)');
+            $('#active').val('@(con.active)');
+                });
+
+        function Save() {
+            id = $('#id').val();
+            name = $('#name').val();
+            connection = $('#connection').val();
+            con_type_id = $('#con_type_id').val();
+            debugger;
+            active = $('#active').val();
+            if (id == 0) {
+
+                $.post('/api/execute/insertCon', {
+                    name: name,
+                    connection: connection,
+                    con__type_id: con_type_id,
+                    active: active
+                })
+                    .done(function (response) {
+                        if (response.status == "success") {
+                            notifier.success('Operation completed successfully');
+                        }
+                        else {
+                            notifier.warning(response.message);
+                        }
+                        parent.refresh();
+                    })
+                    .fail(function () {
+                        notifier.warning('An error occured. Please check fields.');
+                    });
+            }
+            else {
+
+                $.post('/api/execute/updateCon', {
+                    id: id,
+                    name: name,
+                    connection: connection,
+                    con_type_id: con_type_id,
+                    active: active
+                })
+                    .done(function (response) {
+                        if (response.status == "success") {
+                            notifier.success('Operation completed successfully');
+                        }
+                        else {
+                            notifier.warning(response.message);
+                        }
+                        parent.refresh();
+                    })
+                    .fail(function () {
+                        notifier.warning('An error occured. Please check fields.');
+                    });
+            }
+        }
+
+
+    </script>
+
+
+}

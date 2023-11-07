@@ -1,0 +1,33 @@
+﻿@model Scriptingo.Admin.Models.ValidationModel
+
+@{
+    ViewData["Title"] = "Validation";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+<div class="login-form">
+    <div class="section">
+        <h1>@Html.T("Verify Now")</h1>
+        <h4>@Html.T("We sent a verification code on your email")</h4>
+    </div>
+    <div class="section mt-2 mb-5">
+        <form asp-action="Validation">
+            <div class="form-group boxed">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="input-wrapper">
+                    <input asp-for="ValidationCode" class="form-control verify-input" />
+                    <span asp-validation-for="ValidationCode" class="text-danger"></span>
+
+                </div>
+            </div>
+
+            <div class="form-button-group">
+                <button type="submit" class="btn btn-primary btn-block btn-lg">@Html.T("Verify")</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

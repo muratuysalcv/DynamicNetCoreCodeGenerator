@@ -1,0 +1,14 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Scriptingo.Common;
+using Scriptingo.Models.{namespace};
+
+namespace Scriptingo.FastApi.Controllers
+{
+    /// <summary>
+    /// {comment}
+    /// </summary>
+    public class {db_name}_{class_name}Controller : FastApiController<{class_name}>
+    {
+
+    }
+}

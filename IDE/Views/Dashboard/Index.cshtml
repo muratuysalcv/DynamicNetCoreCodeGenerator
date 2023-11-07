@@ -1,0 +1,27 @@
+﻿@using Scriptingo.Admin.Managers;
+@using Scriptingo.Common;
+@using Scriptingo.Common.Models;
+@{
+    ViewData["Title"] = Html.T("Dashboard").ToString();
+}
+<div class="header-large-title">
+    <h1 class="title">@Html.T("Dashboard")</h1>
+    <h4 class="subtitle">@Html.T("Welcome to latestapi.com api world. Develop your api with source code in minutes. <a target='_blank' href='{0}'>How?</a>",Url.Action("index","doc"))</h4>
+</div>
+<div class="section mt-3 mb-3">
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-subtitle">@Html.T("Manage")</h6>
+            <h5 class="card-title">@Html.T("Api List")</h5>
+            <p class="card-text">
+                @Html.T("You can create and manage your apis in api list page.")
+            </p>
+            <a href="@Url.Action("index","api")" class="btn btn-primary">
+                <ion-icon name="layers-outline" role="img" class="md hydrated" aria-label="layers outline"></ion-icon>
+                @Html.T("Api List")
+            </a>
+        </div>
+    </div>
+</div>
+@section Scripts{
+}

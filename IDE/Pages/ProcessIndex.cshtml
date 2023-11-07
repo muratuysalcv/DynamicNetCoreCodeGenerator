@@ -1,0 +1,75 @@
+﻿@page
+@using PagedList;
+@using Scriptingo.Common.Models;
+@using Newtonsoft;
+@using Scriptingo.Common;
+@model ProcessIndexModel
+@{
+    var config = Config.Get();
+
+    ViewData["Title"] = "Process";
+    var processContext = new FastApiContext<_process>();
+    int p = 1;
+    try
+    {
+        p = Convert.ToInt32(Request.Query["p"]);
+        p = p < 1 ? 1 : p;
+    }
+    catch (Exception)
+    {
+    }
+
+    var processList = processContext.Data.ToList(); //db.process.ToPagedList(p, 15).ToList();
+    var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(processList);
+
+}
+
+<div class="card">
+    <div class="card-header">
+        Process
+    </div>
+    <div class="card-body">
+        <div id="processList"></div>
+        <a href="ProcessEdit" style="float:right;" class="btn btn-success">+ Add Process</a>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        //define some sample data
+        var processList = new Tabulator("#processList", {
+            layout: "fitColumns",
+            ajaxURL: "/api/execute/ListProcess",
+            ajaxConfig: 'POST',
+            ajaxContentType: 'json',
+            ajaxResponse: function (url, params, response) {
+
+                return response.data; //return the tableData property of a response json object
+            },
+            ajaxParams: {},
+            //height: 205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+            layout: "fitColumns", //fit columns to width of table (optional)
+            columns: [ //Define Table Columns
+                { title: "id", field: "id", width: 150 },
+                { title: "name", field: "name", hozAlign: "left" },
+                { title: "con_name", field: "con_name", hozAlign: "left" },
+                { title: "con_type_name", field: "con_type_name", hozAlign: "left" },
+                { title: "description", field: "description", hozAlign: "left" },
+                { title: "active", field: "active", hozAlign: "left" }
+
+
+            ]
+        });
+
+        //trigger an alert message when the row is clicked
+        processList.on("rowClick", function (e, row) {
+            window.location.href = 'processEdit?id=' + row.getData().id;
+        });
+
+        function refresh() {
+            processList.setData();
+        }
+    </script>
+    }
+

@@ -1,0 +1,68 @@
+﻿@using Scriptingo.Admin.Managers;
+@using Scriptingo.Common;
+@using Scriptingo.Common.Models;
+@{
+    Layout = "_Layout";
+    var languages = new FastApiContext<_lang>().Data.ToList();
+    var currentLang = languages.FirstOrDefault(x => x.culture_code == Thread.CurrentThread.CurrentCulture.Name);
+    languages = languages.Where(x => x.culture_code != currentLang.culture_code).ToList();
+    var returnUrl = ViewData["RawUrl"] + "";
+    var isLogined = SessionManager.IsLogined(this.Context);
+}
+
+    @section appHeader{
+    <style>
+        #appCapsule {
+            padding-top: 0px !important;
+        }
+    </style>
+    @RenderSection("appHeader",false)
+    }
+
+@section appBottomMenu{
+    
+    @RenderSection("appBottomMenu",false)
+}
+<div class="d-flex" id="wrapper">
+    <div id="page-content-wrapper">
+        <!-- Top navigation-->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="logolink" href="~/">Latest Api</a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item active"><a class="nav-link" href="@Url.Action("index","home")">@Html.T("Home Page")</a></li>
+
+                        @if (!isLogined)
+                        {
+                            <li class="nav-item active"><a class="nav-link" href="@Url.Action("register","account")">@Html.T("Register")</a></li>
+                            <li class="nav-item active"><a class="nav-link" href="@Url.Action("login","account")">@Html.T("Login")</a></li>
+                        }
+                        else
+                        {
+                            <li class="nav-item active"><a class="nav-link" href="@Url.Action("index","dashboard")">@Html.T("Dashboard")</a></li>
+
+                            <li class="nav-item active"><a class="nav-link" href="@Url.Action("logout","account")">@Html.T("Logout")</a></li>
+                        }
+                        <li class="nav-item active"><a class="nav-link" href="@Url.Action("privacy","home")">@Html.T("Privacy")</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@currentLang.name</a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                @foreach (var item in languages)
+                                {
+                                    <a class="dropdown-item" href="@Url.Action("setlanguage","home",new{culture=item.culture_code,returnUrl=returnUrl})">@item.name</a>
+                                }
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+@section Scripts{
+    @await RenderSectionAsync("Scripts",required:false)
+}

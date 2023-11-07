@@ -1,0 +1,15 @@
+﻿<script>
+    $(function () {
+    @if (ViewData["inserted"] != null)
+    {
+        @Html.Raw("notifier.success('Inserted successfuly.')")
+        ;
+    }
+    @if (ViewData["updated"] != null)
+    {
+        @Html.Raw("notifier.success('Updated successfuly.')")
+        ;
+    }
+
+        });
+</script>

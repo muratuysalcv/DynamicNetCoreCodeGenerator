@@ -1,0 +1,29 @@
+﻿        /// <summary>
+        /// {process_description}
+        /// </summary>
+        [HttpPost("{process_name}")]
+        public ContentResult {process_name}([FromBody] ApiRequest req)
+        {
+            var response = new ApiReturn();
+            this.SQL = @"{sql}";
+            try
+            {
+                if (req.WithData)
+                {
+                    var dt = sqlExecuter.ExecuteDataSql(this.SQL, req.Parameters);
+                    var json = response.jsonFromDatatable(dt);
+                    return Content(json, "application/json");
+                }
+                else
+                {
+                    sqlExecuter.ExecuteSql(this.SQL, req.Parameters);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                response.status = "exception";
+                response.message = ex.Message;
+            }
+            return Content(JsonConvert.SerializeObject(response),"application/json");
+        }

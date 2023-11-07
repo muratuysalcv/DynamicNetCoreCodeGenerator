@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FastApi Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+    <link href="~/lib/zebra/zebra_dialog.css" rel="stylesheet" />
+    <link href="~/lib/notify/dist/style.css" rel="stylesheet" />
+    <link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="d-flex" id="wrapper">
+            @RenderBody()
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+    <script src="~/lib/zebra/zebra_pin.min.js"></script>
+    <script src="~/lib/zebra/zebra_dialog.min.js"></script>
+    <script src="~/lib/notify/dist/index.var.js"></script>
+    <script src="~/js/scripts.js" asp-append-version="true"></script>
+    <script>
+        let notifier = new AWN({});
+
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @Html.Partial("_Notification")
+</body>
+</html>

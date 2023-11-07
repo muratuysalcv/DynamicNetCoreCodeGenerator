@@ -1,0 +1,24 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Scriptingo.Common;
+using Scriptingo.Models.{config_name};
+
+namespace Scriptingo.FastApi.Controllers
+{
+    /// <summary>
+    /// {con_comment}
+    /// </summary>
+    public class {config_name}CustomProcessController : Controller
+    {
+        public string SQL { get; set; }
+        public FastApiSqlExecuterContext sqlExecuter { get; set; }
+        public {config_name}CustomProcessController()
+        {
+            sqlExecuter = new FastApiSqlExecuterContext(new ModelConfiguration("{config_name}"));
+        }
+
+{process}
+
+    }
+}

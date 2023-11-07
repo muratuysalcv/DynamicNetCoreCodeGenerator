@@ -1,0 +1,68 @@
+﻿@using System.Globalization;
+<!DOCTYPE html>
+@{
+
+}
+<html lang="">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FastApi Admin</title>
+    <link href="~/lib/zebra/zebra_dialog.css" rel="stylesheet" />
+    <link href="~/lib/notify/dist/style.css" rel="stylesheet" />
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <title>@ViewData["Title"]</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="" />
+    <link rel="icon" type="image/png" href="@Url.Content("~/lib/design/assets/img/favicon.png")" sizes="32x32">
+    <link rel="apple-touch-icon" sizes="180x180" href="@Url.Content("~/lib/design/assets/img/icon/192x192.png")">
+    <link rel="stylesheet" href="@Url.Content("~/css/styles.css")">
+    <link rel="stylesheet" href="@Url.Content("~/lib/design/assets/css/style.css")">
+    <link rel="manifest" href="@Url.Content("~/lib/design/__manifest.json")">
+    <link href="@Url.Content("~/lib/tabulator/css/tabulator_latestapi.css")" rel="stylesheet">
+    <link href="@Url.Content("~/lib/fa/css/all.css")" rel="stylesheet">
+</head>
+<body class="dark-mode-active sb-sidenav-toggle sb-sidenav-toggled">
+
+    <!-- loader -->
+    <div id="loader">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+    <!-- * loader -->
+    <!-- App Header -->
+            @RenderBody()
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    
+    <!-- ============== Js Files ==============  -->
+    <!-- Bootstrap -->
+    <script src="@Url.Content("~/lib/design/assets/js/lib/bootstrap.min.js")"></script>
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <!-- Splide -->
+    <script src="@Url.Content("~/lib/design/assets/js/plugins/splide/splide.min.js")"></script>
+    <!-- ProgressBar js -->
+    <script src="@Url.Content("~/lib/design/assets/js/plugins/progressbar-js/progressbar.min.js")"></script>
+
+    @*libs*@
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+    <script src="~/lib/zebra/zebra_pin.min.js"></script>
+    <script src="~/lib/zebra/zebra_dialog.min.js"></script>
+    <script src="~/lib/notify/dist/index.var.js"></script>
+    <script src="~/lib/fa/js/all.js"></script>
+
+    <!-- Base Js File -->
+    <script src="@Url.Content("~/lib/design/assets/js/base.js")"></script>
+    <script src="~/js/scripts.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @Html.Partial("_Notifications")
+</body>
+</html>

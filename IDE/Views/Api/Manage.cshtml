@@ -1,0 +1,237 @@
+﻿@model Scriptingo.Admin.Models.ApiModel
+
+@{
+    ViewData["Title"] = Html.T("Manage Api").ToString() + " : " + Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="p-2">
+    <ul class="nav nav-tabs lined" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#databases" role="tab">
+                @Html.T("API")
+            </a>
+        </li>
+      @*  <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#processes" role="tab">
+                @Html.T("Processes")
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#configuration" role="tab">
+                @Html.T("Configurations")
+            </a>
+        </li>*@
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#apidetails" role="tab">
+                @Html.T("Download .NET Core")
+            </a>
+        </li>
+    </ul>
+</div>
+
+<div class="tab-content mt-1">
+    <!-- photos tab -->
+    <div class="tab-pane fade show active" id="databases" role="tabpanel">
+        <div class="section">
+            <div class="wide-block pt-2 pb-2">
+                <h3>@Html.T("Database Connections")</h3>
+                @Html.T("Crud operations will be created dynamically when your db change. After build all api will be refreshed.")
+
+                <div id="gridDatabases"></div>
+                <a style="float:right" class="btn btn-sm btn-primary mt-2" href="@Url.Action("edit","con",new{addNewConnectionToApi=Model.ApiCode})"> + @Html.T("Add Connection")</a>
+
+
+                <h3 class="mt-4">@Html.T("Custom Endpoints By SQL")</h3>
+                @Html.T("All processes will be a api endpoint automatically. You can develop your custom needs in your api. All endpoints uses JWT token security.")
+
+                <div id="gridProcess"></div>
+                <a style="float:right" class="btn btn-sm btn-primary mt-2 mb-4" href="@Url.Action("edit","process",new{addNewProcessToConnection=Model.ApiCode})"> + @Html.T("Add Process")</a>
+           <br />
+           <br />
+            </div>
+        </div>
+    </div>
+   @* <div class="tab-pane fade show " id="processes" role="tabpanel">
+        <div class="section">
+            <div class="wide-block pt-2 pb-2">
+                
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade show " id="configuration" role="tabpanel">
+        <div class="section">
+            <div class="wide-block pt-2 pb-2">
+                <h3>@Html.T("Configuration")</h3>
+                @Html.T("You can manage configurations.")
+            </div>
+        </div>
+    </div>*@
+    <div class="tab-pane fade show " id="apidetails" role="tabpanel">
+        <div class="section">
+            <div class="wide-block pt-2 pb-2">
+                <div>
+                    <h3>@Html.T("API Configuration")</h3>
+                    <hr />
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.ID)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.ID)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Active)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Active)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.Host)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.Host)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => model.IsPrivate)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => model.IsPrivate)
+                        </dd>
+                    </dl>
+                    <a  class="btn btn-sm btn-primary mt-2 mb-4" href="@Url.Action("edit","api",new{id=Model.ApiCode})"> @Html.T("Edit")</a>
+
+                    <button class="btn btn-sm btn-primary mt-2 mb-4" onclick="DownloadSource()"> @Html.T("Build and Download")</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        function DownloadSource(){
+            $.get('/execute/build?api_code=@(Model.ApiCode)',function(response){
+               if(response.status=="success"){
+                   window.location.href=response.data;
+               }
+               else{
+                   alert(response.message);
+               }
+            });
+        }
+        var manageIcon = function (cell, formatterParams) { //plain text value
+            return "<i title='@Html.T("Manage")' class='fa fa-list'></i>";
+        };
+        var editIcon = function (cell, formatterParams) { //plain text value
+            return "<i  title='@Html.T("Edit")'class='fa fa-edit'></i>";
+        };
+        var grid = new Tabulator("#gridDatabases", {
+            layout: "fitColumns",
+            responsiveLayout: "hide",
+            ajaxURL: "/execute/ListCon",
+            ajaxConfig: 'POST',
+            ajaxContentType: 'json',
+            ajaxParams: {
+                "Parameters": [
+                    {
+                        "name": "api_code",
+                        "value": "@(Model.ID)",
+                        "info": "string"
+                    }
+                ]
+            },
+            ajaxResponse: function (url, params, response) {
+                debugger;
+                return response.data; //return the tableData property of a response json object
+            },
+            //height: 205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+            //layout: "fitColumns", //fit columns to width of table (optional)
+            columns: [ //Define Table Columns
+                //{ formatter: "responsiveCollapse", width: 30, minWidth: 30, hozAlign: "center", resizable: false, headerSort: false },
+                //{
+                //    formatter: manageIcon,
+                //    width: 40,
+                //    hozAlign: "center",
+                //    cellClick: function (e, cell) {
+                //        window.location.href = 'con/edit/' + cell.getRow().getData().api_code;
+                //    }
+                //},
+                {
+                    formatter: editIcon,
+                    width: 40,
+                    hozAlign: "center",
+                    cellClick: function (e, cell) {
+                        window.location.href = '@Url.Action("edit","con")/' + cell.getRow().getData().ID;
+                    }
+                },
+
+                { title: "@Html.T("Connection ID")", field: "ID", width: 140, hozAlign: "center" },
+                { title: "@Html.T("Connection Code")", field: "name", hozAlign: "left" },
+                { title: "@Html.T("Connection Type")", field: "con_type_name", hozAlign: "left" },
+                { title: "@Html.T("Active")", field: "active", width: 100, hozAlign: "center", formatter: "tickCross", sorter: "boolean" },
+                        { title: "@Html.T("Is Main")", field: "is_main", width: 100, hozAlign: "center", formatter: "tickCross", sorter: "boolean" }
+
+                //{ title: "@Html.T("Api Code")", field: "api_code", hozAlign: "center" },
+                //{ title: "@Html.T("Api Name")", field: "name", hozAlign: "left" },
+                //{ title: "@Html.T("Active")", field: "active", hozAlign: "center", formatter: "tickCross", sorter: "boolean" },
+                ////{ title: "@Html.T("Description")", field: "description", hozAlign: "left" },
+                //{ title: "@Html.T("Host")", field: "host", hozAlign: "left" },
+                ////{ title: "@Html.T("Api Uid")", field: "uid", hozAlign: "left" },
+            ]
+        });
+
+        var grid2 = new Tabulator("#gridProcess", {
+            layout: "fitColumns",
+            responsiveLayout: "hide",
+            ajaxURL: "/execute/ListProcess",
+            ajaxConfig: 'POST',
+            ajaxContentType: 'json',
+            ajaxParams: {
+                "Parameters": [
+                    {
+                        "name": "api_code",
+                        "value": "@(Model.ID)",
+                        "info": "string"
+                    }
+                ]
+            },
+            ajaxResponse: function (url, params, response) {
+                debugger;
+                return response.data; //return the tableData property of a response json object
+            },
+            columns: [
+                {
+                    formatter: editIcon,
+                    width: 40,
+                    hozAlign: "center",
+                    cellClick: function (e, cell) {
+                        window.location.href = '@Url.Action("edit","process")/' + cell.getRow().getData().ID;
+                    }
+                },
+                { title: "@Html.T("Connection ID")", field: "ID", width: 140, hozAlign: "center" },
+                { title: "@Html.T("Process Name")", field: "name", hozAlign: "left" },
+                { title: "@Html.T("Connection Name")", field: "con_name", hozAlign: "left" },
+                { title: "@Html.T("Connection Type")", field: "con_type_name", hozAlign: "left" },
+                { title: "@Html.T("Description")", field: "description", hozAlign: "left" },
+                { title: "@Html.T("Active")", field: "active", width: 100, hozAlign: "center", formatter: "tickCross", sorter: "boolean" }
+            ]
+        });
+
+        function refresh() {
+            grid.setData();
+            grid2.setData();
+        }
+    </script>
+}
